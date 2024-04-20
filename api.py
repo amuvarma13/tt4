@@ -89,6 +89,7 @@ def serve_wav():
         return jsonify(error_response), 400
     v = voices[voice]
     texts = split_and_recombine_text(text)
+    print(f"texts are {texts}")
     audios = []
     for t in texts:
         audios.append(msinference.inference(t, voice, alpha=0.3, beta=0.7, diffusion_steps=7, embedding_scale=1))
