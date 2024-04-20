@@ -8,7 +8,8 @@ def send_text_to_speech_request(text):
     # Parameters to send to the API
     data = {
         'text': text,
-        'voice': "m-us-1"
+        'voice': "m-us-1", 
+        'steps': 10
     }
     
     # Send POST request to the API
