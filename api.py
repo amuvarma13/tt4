@@ -55,7 +55,7 @@ def serve_wav():
         return jsonify(error_response), 400
     text = request.form['text'].strip()
     voice = request.form['voice'].strip().lower()
-    steps = request.form.get('steps')
+    steps = int(request.form.get('steps'))
     parseRequestTime = time.time()
     print(f"Time taken to parse request: {parseRequestTime - startTime} seconds")
     if not voice in voices:
