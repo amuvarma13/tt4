@@ -37,11 +37,11 @@ print("Starting Flask app")
 app = Flask(__name__)
 cors = CORS(app)
 
+voice = msinference.compute_style('ref.wav')
 
-
-def synthesize(text, voice, steps = 10, alpha_ = 0.1, beta_ = 0.1):
+def synthesize(text, steps = 10, alpha_ = 0.1, beta_ = 0.1):
     v = voice.lower()
-    return msinference.inference(text, voices[v], alpha=alpha_, beta=beta_, diffusion_steps=steps, embedding_scale=1)
+    return msinference.inference(text, voice, alpha=alpha_, beta=beta_, diffusion_steps=steps, embedding_scale=1)
 
 @app.route("/ping", methods=['GET'])
 def ping():
@@ -54,19 +54,12 @@ def serve_wav():
         error_response = {'error': 'Missing required fields. Please include "text" and "voice" in your request.'}
         return jsonify(error_response), 400
     text = request.form['text'].strip()
-    voice = request.form['voice'].strip().lower()
     steps = int(request.form.get('steps'))
     alpha_ = float(request.form.get('alpha')) 
     beta_ = float(request.form.get('beta'))
     parseRequestTime = time.time()
-    print(f"Time taken to parse request: {parseRequestTime - startTime} seconds")
-    if not voice in voices:
-        error_response = {'error': 'Invalid voice selected'}
-        return jsonify(error_response), 400
-    v = voices[voice]
-    print(f"texts are {text}")
     audios = []
-    synth_audio = synthesize(text, voice, steps, alpha_, beta_)
+    synth_audio = synthesize(text, steps, alpha_, beta_)
     synth_audio_time = time.time()
     print(f"Time taken to synthesize audio: {synth_audio_time - parseRequestTime} seconds")
     audios.append(synth_audio)
