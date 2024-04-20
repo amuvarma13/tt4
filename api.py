@@ -1,16 +1,5 @@
-# StyleTTS 2 HTTP Streaming API by @fakerybakery - Copyright (c) 2023 mrfakename. All rights reserved.
-# Docs: API_DOCS.md
-# To-Do:
-# * Support voice cloning
-# * Implement authentication, user "credits" system w/ SQLite3
+
 import io
-import os
-import hashlib
-import threading
-import markdown
-import re
-import json
-from tortoise.utils.text import split_and_recombine_text
 from flask import Flask, Response, request, jsonify
 from scipy.io.wavfile import write
 import numpy as np
@@ -49,24 +38,13 @@ print("Starting Flask app")
 app = Flask(__name__)
 cors = CORS(app)
 
-@app.route("/")
-def index():
-    with open('API_DOCS.md', 'r') as f:
-        return markdown.markdown(f.read())
+
 
 def synthesize(text, voice, steps):
     v = voice.lower()
     return msinference.inference(t, voices[v], alpha=0.3, beta=0.7, diffusion_steps=lngsteps, embedding_scale=1)
 def ljsynthesize(text, steps):
     return ljinference.inference(text, torch.randn(1,1,256).to('cuda' if torch.cuda.is_available() else 'cpu'), diffusion_steps=7, embedding_scale=1)
-# def ljsynthesize(text):
-#     texts = split_and_recombine_text(text)
-#     v = voice.lower()
-#     audios = []
-#     noise = torch.randn(1,1,256).to('cuda' if torch.cuda.is_available() else 'cpu')
-#     for t in texts:
-#         audios.append(ljinference.inference(text, noise, diffusion_steps=7, embedding_scale=1))
-#     return np.concatenate(audios)
 
 @app.route("/api/v1/stream", methods=['POST'])
 def serve_wav_stream():
@@ -79,7 +57,7 @@ def serve_wav_stream():
         error_response = {'error': 'Invalid voice selected'}
         return jsonify(error_response), 400
     v = voices[voice]
-    texts = split_and_recombine_text(text)
+    texts = [text]
     def generate():
         wav_header = genHeader(24000, 16, 1)
         is_first_chunk = True
@@ -108,7 +86,7 @@ def serve_wav():
         error_response = {'error': 'Invalid voice selected'}
         return jsonify(error_response), 400
     v = voices[voice]
-    texts = split_and_recombine_text(text)
+    texts = [text]
     audios = []
     for t in texts:
         audios.append(msinference.inference(t, voice, alpha=0.3, beta=0.7, diffusion_steps=7, embedding_scale=1))
@@ -118,4 +96,4 @@ def serve_wav():
     response.headers["Content-Type"] = "audio/wav"
     return response
 if __name__ == "__main__":
-    app.run("0.0.0.0")
+    app.run(host="0.0.0.0", port=8080)
