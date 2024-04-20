@@ -55,6 +55,8 @@ def serve_wav():
         return jsonify(error_response), 400
     text = request.form['text'].strip()
     voice = request.form['voice'].strip().lower()
+    parseRequestTime = time.time()
+    print(f"Time taken to parse request: {parseRequestTime - startTime} seconds")
     if not voice in voices:
         error_response = {'error': 'Invalid voice selected'}
         return jsonify(error_response), 400
@@ -62,12 +64,16 @@ def serve_wav():
     print(f"texts are {text}")
     audios = []
     synth_audio = synthesize(text, voice)
+    synth_audio_time = time.time()
+    print(f"Time taken to synthesize audio: {synth_audio_time - parseRequestTime} seconds")
     audios.append(synth_audio)
     output_buffer = io.BytesIO()
     write(output_buffer, 24000, np.concatenate(audios))
     response = Response(output_buffer.getvalue())
     response.headers["Content-Type"] = "audio/wav"
     endTime = time.time()
+    writeTime = time.time()
+    print(f"Time taken to write audio: {writeTime - synth_audio_time} seconds")
     print(f"Time taken: {endTime - startTime} seconds")
     return response
 if __name__ == "__main__":
