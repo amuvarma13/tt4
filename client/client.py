@@ -4,12 +4,14 @@ import time
 api_url = 'http://34.91.239.71:8080/api/v1/static'
 ping_url = 'http://34.91.239.71:8080/ping'
 
-def send_text_to_speech_request(text):
+text = "How are you doing today?"
+
+def send_text_to_speech_request():
     # Parameters to send to the API
     data = {
         'text': text,
-        'voice': "m-us-1", 
-        'steps': 10
+        'voice': "m-us-3", 
+        'steps': 7
     }
     
     # Send POST request to the API
@@ -40,4 +42,4 @@ def send_text_to_speech_request(text):
 
 
 # Example usage of the function
-send_text_to_speech_request('Hello, this is a test.')
+send_text_to_speech_request()

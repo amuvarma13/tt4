@@ -39,9 +39,9 @@ cors = CORS(app)
 
 
 
-def synthesize(text, voice, steps = 10):
+def synthesize(text, voice, steps = 10, alpha_ = 0.1, beta_ = 0.1):
     v = voice.lower()
-    return msinference.inference(text, voices[v], alpha=0.3, beta=0.7, diffusion_steps=steps, embedding_scale=1)
+    return msinference.inference(text, voices[v], alpha=alpha_, beta=beta_, diffusion_steps=steps, embedding_scale=1)
 
 @app.route("/ping", methods=['GET'])
 def ping():
@@ -56,6 +56,8 @@ def serve_wav():
     text = request.form['text'].strip()
     voice = request.form['voice'].strip().lower()
     steps = int(request.form.get('steps'))
+    alpha_ = float(request.form.get('alpha')) 
+    beta_ = float(request.form.get('beta'))
     parseRequestTime = time.time()
     print(f"Time taken to parse request: {parseRequestTime - startTime} seconds")
     if not voice in voices:
@@ -64,7 +66,7 @@ def serve_wav():
     v = voices[voice]
     print(f"texts are {text}")
     audios = []
-    synth_audio = synthesize(text, voice, steps)
+    synth_audio = synthesize(text, voice, steps, alpha_, beta_)
     synth_audio_time = time.time()
     print(f"Time taken to synthesize audio: {synth_audio_time - parseRequestTime} seconds")
     audios.append(synth_audio)
