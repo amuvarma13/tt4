@@ -1,5 +1,7 @@
 
 import io
+
+from tortoise.utils.text import split_and_recombine_text
 from flask import Flask, Response, request, jsonify
 from scipy.io.wavfile import write
 import numpy as np
@@ -86,7 +88,7 @@ def serve_wav():
         error_response = {'error': 'Invalid voice selected'}
         return jsonify(error_response), 400
     v = voices[voice]
-    texts = [text]
+    texts = split_and_recombine_text(text)
     audios = []
     for t in texts:
         audios.append(msinference.inference(t, voice, alpha=0.3, beta=0.7, diffusion_steps=7, embedding_scale=1))

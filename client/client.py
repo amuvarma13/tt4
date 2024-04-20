@@ -1,6 +1,8 @@
 import requests
 
-def send_text_to_speech_request(api_url, text, voice):
+api_url = 'http://34.141.243.146:8080/api/v1/static'
+
+def send_text_to_speech_request(text):
     # Parameters to send to the API
     data = {
         'text': text,
@@ -21,7 +23,7 @@ def send_text_to_speech_request(api_url, text, voice):
         print("Error:", response.json()['error'])
 
 # URL of the API
-api_url = 'http://34.141.243.146:5000/api/v1/static'
+
 
 # Example usage of the function
-send_text_to_speech_request(api_url, 'Hello, this is a test.', 'default_voice')
+send_text_to_speech_request('Hello, this is a test.')
