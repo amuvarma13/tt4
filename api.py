@@ -40,7 +40,6 @@ cors = CORS(app)
 voice = msinference.compute_style('ref.wav')
 
 def synthesize(text, steps = 10, alpha_ = 0.1, beta_ = 0.1):
-    v = voice.lower()
     return msinference.inference(text, voice, alpha=alpha_, beta=beta_, diffusion_steps=steps, embedding_scale=1)
 
 @app.route("/ping", methods=['GET'])
@@ -48,7 +47,7 @@ def ping():
     return "Pong"
 
 @app.route("/api/v1/static", methods=['POST'])
-def serve_wav():
+def serve_wav(): 
     startTime = time.time()
     if 'text' not in request.form or 'voice' not in request.form:
         error_response = {'error': 'Missing required fields. Please include "text" and "voice" in your request.'}
