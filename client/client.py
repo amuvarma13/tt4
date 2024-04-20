@@ -1,8 +1,8 @@
 import requests
 import time
 
-api_url = 'http://34.141.243.146:8080/api/v1/static'
-ping_url = 'http://34.141.243.146:8080/ping'
+api_url = 'http://34.91.239.71:8080/api/v1/static'
+ping_url = 'http://34.91.239.71:8080/ping'
 
 def send_text_to_speech_request(text):
     # Parameters to send to the API
