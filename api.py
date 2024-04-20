@@ -44,7 +44,9 @@ def synthesize(text, voice):
     v = voice.lower()
     return msinference.inference(text, voices[v], alpha=0.3, beta=0.7, diffusion_steps=10, embedding_scale=1)
 
-
+@app.route("/ping", methods=['GET'])
+def ping():
+    return "Pong"
 
 @app.route("/api/v1/static", methods=['POST'])
 def serve_wav():
