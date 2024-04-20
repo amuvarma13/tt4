@@ -3,10 +3,9 @@ import io
 from flask import Flask, Response, request, jsonify
 from scipy.io.wavfile import write
 import numpy as np
-import ljinference
 import msinference
-import torch
 from flask_cors import CORS
+import time
 
 
 def genHeader(sampleRate, bitsPerSample, channels):
@@ -50,6 +49,7 @@ def ping():
 
 @app.route("/api/v1/static", methods=['POST'])
 def serve_wav():
+    startTime = time.time()
     if 'text' not in request.form or 'voice' not in request.form:
         error_response = {'error': 'Missing required fields. Please include "text" and "voice" in your request.'}
         return jsonify(error_response), 400
@@ -67,6 +67,8 @@ def serve_wav():
     write(output_buffer, 24000, np.concatenate(audios))
     response = Response(output_buffer.getvalue())
     response.headers["Content-Type"] = "audio/wav"
+    endTime = time.time()
+    print(f"Time taken: {endTime - startTime} seconds")
     return response
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080)
