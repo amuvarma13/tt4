@@ -42,39 +42,10 @@ cors = CORS(app)
 
 
 
-def synthesize(text, voice, steps):
+def synthesize(text, voice):
     v = voice.lower()
-    return msinference.inference(t, voices[v], alpha=0.3, beta=0.7, diffusion_steps=lngsteps, embedding_scale=1)
-def ljsynthesize(text, steps):
-    return ljinference.inference(text, torch.randn(1,1,256).to('cuda' if torch.cuda.is_available() else 'cpu'), diffusion_steps=7, embedding_scale=1)
+    return msinference.inference(text, voices[v], alpha=0.3, beta=0.7, diffusion_steps=10, embedding_scale=1)
 
-@app.route("/api/v1/stream", methods=['POST'])
-def serve_wav_stream():
-    if 'text' not in request.form or 'voice' not in request.form:
-        error_response = {'error': 'Missing required fields. Please include "text" and "voice" in your request.'}
-        return jsonify(error_response), 400
-    text = request.form['text'].strip()
-    voice = request.form['voice'].strip().lower()
-    if not voice in voices:
-        error_response = {'error': 'Invalid voice selected'}
-        return jsonify(error_response), 400
-    v = voices[voice]
-    texts = [text]
-    def generate():
-        wav_header = genHeader(24000, 16, 1)
-        is_first_chunk = True
-        for t in texts:
-            wav = msinference.inference(t, voice, alpha=0.3, beta=0.7, diffusion_steps=7, embedding_scale=1)
-            output_buffer = io.BytesIO()
-            write(output_buffer, 24000, wav)
-            output_buffer.read(44)
-            if is_first_chunk:
-                data = wav_header + wav_file.read()
-                is_first_chunk = False
-            else:
-                data = wav_file.read()
-            yield data
-    return Response(generate(), mimetype="audio/x-wav")
 
 
 @app.route("/api/v1/static", methods=['POST'])
