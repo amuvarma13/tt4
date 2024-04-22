@@ -25,7 +25,7 @@ def genHeader(sampleRate, bitsPerSample, channels):
     o += (datasize).to_bytes(4, "little")
     return o
 
-voicelist = ['f-us-1', 'f-us-2', 'f-us-3', 'f-us-4', 'm-us-1', 'm-us-2', 'm-us-3', 'm-us-4']
+voicelist = ['f-us-1', 'f-us-2', 'f-us-3', 'f-us-4', 'slow-emphatic', 'm-us-2', 'm-us-3', 'm-us-4']
 voices = {}
 import phonemizer
 global_phonemizer = phonemizer.backend.EspeakBackend(language='en-us', preserve_punctuation=True,  with_stress=True)
